@@ -4,6 +4,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
+import UploadThoughts from "./pages/UploadThoughts"
 import ProtectedRoute from "./components/ProtectedRoutes"
 
 function Logout(){
@@ -30,6 +31,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
+        <Route path="/uploadThoughts" element={<UploadThoughts/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
