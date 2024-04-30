@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
 class Note(models.Model):
@@ -74,6 +75,7 @@ class Account(models.Model):
     account_name = models.CharField(max_length=255, unique=True)
     account_number = models.CharField(max_length=255)
     account_type = models.ForeignKey(AccountType, on_delete=models.SET_NULL, null=True, related_name='accounts')
+    currency = models.CharField(max_length=10)  # For storing the currency code, e.g., USD, EUR, BTC
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)  # Default balance set to 0
     description = models.TextField(blank=True, null=True)
 
@@ -85,14 +87,14 @@ class Transaction(models.Model):
     from_account = models.ForeignKey(
         'Account', 
         related_name='transactions_out', 
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,
         null=True, 
         blank=True
     )
     to_account = models.ForeignKey(
         'Account', 
         related_name='transactions_in', 
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,
         null=True, 
         blank=True
     )
@@ -103,4 +105,19 @@ class Transaction(models.Model):
     def __str__(self):
         return f"From {self.from_account} to {self.to_account} - {self.amount}"
 
+    def save(self, *args, **kwargs):
+        if self.from_account and self.amount > self.from_account.balance:
+            raise ValidationError("Insufficient funds in from_account")
+        
+        # If there's a from_account, decrease its balance
+        if self.from_account:
+            self.from_account.balance -= self.amount
+            self.from_account.save()
+
+        # If there's a to_account, increase its balance
+        if self.to_account:
+            self.to_account.balance += self.amount
+            self.to_account.save()
+
+        super().save(*args, **kwargs)
 
