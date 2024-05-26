@@ -10,6 +10,5 @@ admin.site.register(CryptoWallet)
 admin.site.register(Government)
 
 admin.site.register(Account)
-admin.site.register(AccountType)
-
 admin.site.register(Transaction)
+admin.site.register(AccountType)
