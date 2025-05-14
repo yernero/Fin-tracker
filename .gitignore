@@ -1,2 +1,6 @@
 
 /env
+/backend/api/__pycache__
+/backend/api/__pycache__
+backend/api/__pycache__/admin.cpython-312.pyc
+backend/api/__pycache__/models.cpython-312.pyc
